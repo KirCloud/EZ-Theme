@@ -475,7 +475,7 @@ import { getCommConfig, fetchPlanById, verifyCoupon as checkCoupon, submitOrder 
 
 import { getUserInfo } from '@/api/dashboard';
 
-import { isXboard, ORDER_CONFIG } from '@/utils/baseConfig';
+import { isXboard, ORDER_CONFIG, WALLET_CONFIG } from '@/utils/baseConfig';
 
 import CommonDialog from '@/components/popup/CommonDialog.vue';
 
@@ -957,16 +957,25 @@ export default {
 
       if (!selectedPriceType.value || loading.submitting) return;
 
-      
 
-      // 检查是否需要二次确认
+      // ✅ 新增：订单金额校验
+      const MIN_ORDER_AMOUNT = WALLET_CONFIG.minimumDepositAmount * 100;
+      if (finalPrice.value < MIN_ORDER_AMOUNT) {
+        if((userInfo.value.balance-finalPrice.value)>=0){
+          // 检查是否需要二次确认
 
-      if (ORDER_CONFIG.confirmOrder) {
+          if (ORDER_CONFIG.confirmOrder) {
 
-        showConfirmDialog.value = true;
+            showConfirmDialog.value = true;
 
-        return; // 等待用户确认
+            return; // 等待用户确认
 
+          }
+          await executeOrderSubmission();
+          return
+        }
+        showToast('余额不足,请点击 "更多-充值余额" 充值后再试', 'warning');
+        return; // 阻止继续提交
       }
 
       

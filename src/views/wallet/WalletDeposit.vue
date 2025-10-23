@@ -96,26 +96,26 @@
           </div>
 
           <!-- 自定义金额输入 -->
-          <div class="custom-amount">
-            <label for="customAmount">{{ $t('wallet.deposit.customAmount') }}</label>
-            <!-- 骨架屏 - 当货币符号加载中显示 -->
-            <div v-if="loading.config" class="input-container skeleton-input">
-              <div class="skeleton-input-field"></div>
-            </div>
-            <!-- 实际输入框 - 加载完成后显示 -->
-            <div v-else class="input-container">
-              <span class="currency-symbol">{{ currencySymbol }}</span>
-              <input
-                id="customAmount"
-                v-model="customAmount"
-                type="number"
-                min="1"
-                :placeholder="$t('wallet.deposit.customAmountPlaceholder')"
-                @input="onCustomAmountInput"
-              />
-            </div>
-            <small v-if="amountError" class="error-message">{{ amountError }}</small>
-          </div>
+<!--          <div class="custom-amount">-->
+<!--            <label for="customAmount">{{ $t('wallet.deposit.customAmount') }}</label>-->
+<!--            &lt;!&ndash; 骨架屏 - 当货币符号加载中显示 &ndash;&gt;-->
+<!--            <div v-if="loading.config" class="input-container skeleton-input">-->
+<!--              <div class="skeleton-input-field"></div>-->
+<!--            </div>-->
+<!--            &lt;!&ndash; 实际输入框 - 加载完成后显示 &ndash;&gt;-->
+<!--            <div v-else class="input-container">-->
+<!--              <span class="currency-symbol">{{ currencySymbol }}</span>-->
+<!--              <input-->
+<!--                id="customAmount"-->
+<!--                v-model="customAmount"-->
+<!--                type="number"-->
+<!--                min="1"-->
+<!--                :placeholder="$t('wallet.deposit.customAmountPlaceholder')"-->
+<!--                @input="onCustomAmountInput"-->
+<!--              />-->
+<!--            </div>-->
+<!--            <small v-if="amountError" class="error-message">{{ amountError }}</small>-->
+<!--          </div>-->
 
           <!-- 充值按钮 -->
           <div class="deposit-actions">

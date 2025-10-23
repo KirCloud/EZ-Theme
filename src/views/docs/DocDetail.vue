@@ -996,7 +996,7 @@ const renderedContent = computed(() => {
 
           'src', 'alt', 'title', 'width', 'height', 'frameborder', 'allowfullscreen',
 
-          'data-original-onclick', 'data-href', 'data-target', 'data-*'
+          'data-original-onclick', 'data-href', 'data-target', 'data-*','allow','sandbox'
 
         ],
 
