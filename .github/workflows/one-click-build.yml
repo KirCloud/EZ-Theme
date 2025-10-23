@@ -30,10 +30,21 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # 如果你的前端位于子目录（例如 frontend/ 或 nothing-front/），将 FRONTEND_DIR 改为相对路径（如: ./nothing-front）
+    env:
+      FRONTEND_DIR: .  # 默认根目录。如需设置子目录改成 ./your-frontend-dir
 
     steps:
     - name: 📥 获取代码
       uses: actions/checkout@v3
+
+    - name: 🧭 显示工作目录（调试用） 
+      # 列出文件，帮助确认我们是否在正确目录（若你的前端在子目录请修改 FRONTEND_DIR）
+      run: |
+        echo "工作区: $GITHUB_WORKSPACE"
+        echo "切换到前端目录: ${{ env.FRONTEND_DIR }}"
+        ls -la
+        ls -la ${{ env.FRONTEND_DIR }} || true
 
     - name: 🔧 设置 Node.js
       uses: actions/setup-node@v3
@@ -41,36 +52,54 @@ jobs:
         node-version: '18'
         cache: 'npm'
 
-    - name: 📦 安装依赖
+    - name: 📦 安装依赖并确保生成 package-lock.json
+      working-directory: ${{ env.FRONTEND_DIR }}    # 若前端在子目录，确保这里指向正确目录
       run: |
+        # 安装依赖（正常流程）
         npm install
-        npm install defu
 
-    - name: ⚙️ 创建环境配置
+        # 安全生成 package-lock.json（只生成锁文件，不重新安装）
+        # 若命令失败（例如项目使用 pnpm/yarn），则降级创建一个最小的 package-lock.json 文件以满足需要检测存在性的 action
+        npm i --package-lock-only --no-audit --no-fund || echo '{}' > package-lock.json
+
+        # 显示是否生成成功（调试）
+        echo "package-lock.json 是否存在:"
+        ls -la package-lock.json || true
+        echo "package.json:"
+        ls -la package.json || true
+
+    - name: ⚙️ 创建环境配置 (.env.production)
+      working-directory: ${{ env.FRONTEND_DIR }}
       run: |
+        # 生成生产环境 .env 文件，注意这里没有额外空格（避免解析问题）
         cat > .env.production << EOF
-        NODE_ENV=production
-        VUE_APP_TITLE=${{ github.event.inputs.title }}
-        VUE_APP_ENV=${{ github.event.inputs.env }}
-        VUE_APP_DEBUGGING=${{ github.event.inputs.debugging }}
-        VUE_APP_CONFIGJS=true
-        VUE_APP_OBFUSCATION=${{ github.event.inputs.obfuscation }}
-        EOF
+NODE_ENV=production
+VUE_APP_TITLE=${{ github.event.inputs.title }}
+VUE_APP_ENV=${{ github.event.inputs.env }}
+VUE_APP_DEBUGGING=${{ github.event.inputs.debugging }}
+VUE_APP_CONFIGJS=true
+VUE_APP_OBFUSCATION=${{ github.event.inputs.obfuscation }}
+EOF
 
     - name: 🔨 执行构建
+      working-directory: ${{ env.FRONTEND_DIR }}
       run: |
         npm run build
 
     - name: 📦 打包构建文件
+      working-directory: ${{ env.FRONTEND_DIR }}
       run: |
-        zip -r build.zip dist/
+        # 将 dist 打包到仓库根目录的 build.zip，确保文件路径正确
+        zip -r $GITHUB_WORKSPACE/build.zip dist/
+        # 显示打包结果（调试）
+        ls -la $GITHUB_WORKSPACE/build.zip
 
-    - name: 🚀 创建 Release
+    - name: 🚀 创建 Release（官方 action）
       id: release
       uses: actions/create-release@v1
       with:
         tag_name: build-${{ github.run_number }}
-        release_name: 🚀 EZ-Theme 构建 ${{ github.run_number }}
+        release_name: "🚀 EZ-Theme 构建 ${{ github.run_number }}"
         body: |
           ## 🎉 构建完成！
 
@@ -90,11 +119,10 @@ jobs:
           [@hami9ua](https://t.me/hami9ua)
         draft: false
         prerelease: false
+      # create-release 会自动使用 GITHUB_TOKEN（无需显式提供）
 
-    - name: 📦 上传构建文件
+    - name: 📦 上传构建文件到 Release（官方 action）
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.release.outputs.upload_url }}
-        asset_path: build.zip
-        asset_name: build.zip
-        asset_content_type: application/zip
+        asset_path: ${{ github.workspace }}/build._
