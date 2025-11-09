@@ -66,12 +66,20 @@
 
             <!-- 节点状态指示器 -->
 
-            <div class="node-status">
+<!--            <div class="node-status">-->
 
-              <div class="status-indicator" :class="{ 'online': node.is_online === 1 }"></div>
+<!--              <div class="status-indicator" :class="{ 'online': node.is_online === 1 }"></div>-->
 
-            </div>
-
+<!--            </div>-->
+            <!-- 节点国旗显示 -->
+            <template v-if="node.tags && node.tags.length > 0">
+              <img
+                  v-if="getFlagUrlFromNodeTags(node.tags[0])"
+                  :src="getFlagUrlFromNodeTags(node.tags[0])"
+                  alt="flag"
+                  class="node-flag"
+              />
+            </template>
             
 
             <!-- 节点信息 -->
@@ -90,21 +98,21 @@
 
                 <!-- 节点类型标签 -->
 
-                <span class="node-tag type-tag">{{ node.type }}</span>
+                <!--span class="node-tag type-tag">{{ node.type }}</span-->
 
                 
 
                 <!-- 其他标签 -->
 
-                <template v-if="node.tags && node.tags.length > 0">
+<!--                <template v-if="node.tags && node.tags.length > 0">-->
 
-                  <span v-for="(tag, index) in node.tags" :key="index" class="node-tag">
+<!--                  <span v-for="(tag, index) in node.tags" :key="index" class="node-tag">-->
 
-                    {{ tag }}
+<!--                    {{ tag }}-->
 
-                  </span>
+<!--                  </span>-->
 
-                </template>
+<!--                </template>-->
 
               </div>
 
@@ -339,6 +347,12 @@ const fetchNodes = async () => {
   }
 
 };
+
+
+function getFlagUrlFromNodeTags(name) {
+  if (!name || name.length === 0) return ''
+  return `https://flagcdn.com/${name.toLowerCase()}.svg`
+}
 
 
 
@@ -893,6 +907,15 @@ onMounted(() => {
 
   }
 
+}
+
+.node-flag {
+  width: 32px;
+  height: 32px;
+  border-radius: 180%;
+  object-fit: cover;
+  margin-right: 1em;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
 </style> 
