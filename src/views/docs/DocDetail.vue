@@ -702,12 +702,11 @@ const buildNoAccessCardHtml = () => {
           <div class="no-plan-title">${title}</div>
           <div class="no-plan-actions">
             <button class="action-button primary" data-href="/shop">
-              <span class="btn-icon"></span>
+              <svg data-v-6764ce0f="" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" size="16" class="tabler-icon tabler-icon-shopping-cart btn-icon"><path d="M6 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path><path d="M17 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path><path d="M17 17h-11v-14h-2"></path><path d="M6 5l14 1l-1 7h-13"></path></svg>
               <span>${buyText}</span>
             </button>
             <button class="action-button secondary" data-href="/tickets">
-              <span class="btn-icon"></span>
-              <span>${supportText}</span>
+            <svg data-v-6764ce0f="" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" size="16" class="tabler-icon tabler-icon-message btn-icon"><path d="M8 9h8"></path><path d="M8 13h6"></path><path d="M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-5l-5 3v-3h-2a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12z"></path></svg>              <span>${supportText}</span>
             </button>
           </div>
         </div>
